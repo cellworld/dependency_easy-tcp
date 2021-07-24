@@ -1,17 +1,13 @@
 #include <vector>
-#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <thread>
-#include <functional>
 #include <cstring>
 #include <errno.h>
 #include <iostream>
-#include <signal.h>
 #include <fcntl.h>
 #include <easy_tcp/listener.h>
 
@@ -50,24 +46,27 @@ namespace easy_tcp{
     }
 
     void process_incoming_connection_requests(Listener *listener){
-        cout << "listening on port " << listener->port << endl;
+        cout << "Listener: listening on port " << listener->port << endl;
         while (listener->active && (fcntl(listener->file_descriptor, F_GETFD) != -1 || errno != EBADF)){
             string client_ip_address;
             int file_descriptor = process_client_connection_attempt(listener->file_descriptor,1, client_ip_address);
-            if (file_descriptor > 0)
-                if (!listener->call_back(file_descriptor, client_ip_address)) close(file_descriptor);
+            if (file_descriptor > 0) {
+                if (!listener->call_back(file_descriptor, client_ip_address)) {
+                    close(file_descriptor);
+                }
+            }
         }
     }
 
     bool Listener::start() {
         if (port == -1) { //port not set
-            cerr << "port number not set" << endl;
+            cerr << "Listener: port number not set" << endl;
             return false;
         }
         struct sockaddr_in m_serverAddress;
         file_descriptor = socket(AF_INET, SOCK_STREAM, 0);
         if (file_descriptor == -1) { //socket failed
-            cerr << "socket failed" << endl;
+            cerr << "Listener: socket creation failed" << endl;
             return false;
         }
         int option = 1;
@@ -78,23 +77,28 @@ namespace easy_tcp{
         m_serverAddress.sin_port = htons(port);
         int bindSuccess = bind(file_descriptor, (struct sockaddr *) &m_serverAddress, sizeof(m_serverAddress));
         if (bindSuccess == -1) { // bind failed
-            cerr << "bind failed" << endl;
+            cerr << "Listener: bind failed" << endl;
             return false;
         }
         int listenSuccess = listen(file_descriptor, queue_size);
         if (listenSuccess == -1) { // listen failed
-            cerr << "listen failed" << endl;
+            cerr << "Listener: listening failed" << endl;
             return false;
         }
 
         active = true;
-        loop_thread = thread(&process_incoming_connection_requests, this);
+        loop_thread = new thread(&process_incoming_connection_requests, this);
         return true;
     }
 
     void Listener::stop() {
         active = false;
-        loop_thread.join();
+        if (loop_thread) {
+            cout << "stopping listener" << endl;
+            loop_thread->join();
+            delete (loop_thread);
+            loop_thread = nullptr;
+        }
         close(file_descriptor);
     }
 

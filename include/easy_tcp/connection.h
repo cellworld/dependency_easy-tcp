@@ -9,6 +9,7 @@ namespace easy_tcp{
     typedef message_received_func *message_received_func_t;
 
     struct Connection{
+        Connection();
         Connection(int file_descriptor, std::string ip, message_received_func_t = nullptr);
         Connection(std::string ip, int port, message_received_func_t = nullptr);
         bool start();
@@ -20,7 +21,7 @@ namespace easy_tcp{
         std::string remote_ip;
         int remote_port;
         message_received_func_t message_received_call_back;
-        std::thread loop_thread;
+        std::thread *loop_thread;
         bool active;
         ~Connection();
     };

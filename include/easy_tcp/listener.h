@@ -17,7 +17,7 @@ namespace easy_tcp {
         bool active;
         connection_attempt_func_t call_back;
         int queue_size;
-        std::thread loop_thread;
+        std::thread *loop_thread;
         ~Listener();
     };
 }
