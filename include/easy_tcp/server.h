@@ -3,6 +3,7 @@
 #include <easy_tcp/listener.h>
 #include <easy_tcp/service.h>
 #include <vector>
+#include <iostream>
 
 namespace easy_tcp{
     template <class T>
@@ -17,10 +18,10 @@ namespace easy_tcp{
                 *listening = true;
                 while (*listening){
                     auto incoming_connection = listener.wait_for_client(10);
-                    if (incoming_connection>=0){
+                    if (incoming_connection >= 0){
                         auto new_service = new T(incoming_connection);
                         clients.push_back(new_service);
-                        new_service->on_connect();
+                        new_service->start();
                     }
                 }
 
@@ -30,9 +31,11 @@ namespace easy_tcp{
 
         ~Server(){
             *listening = false;
-            for(auto client:clients)
-                delete(client);
             incoming_connections->join();
+            for(auto client:clients) {
+                client->stop();
+                delete (client);
+            }
             delete(listening);
             delete(incoming_connections);
         }
@@ -40,7 +43,7 @@ namespace easy_tcp{
         Listener listener;
     private:
         std::atomic<bool> *listening = nullptr;
-        std::thread *incoming_connections =nullptr;
+        std::thread *incoming_connections = nullptr;
         std::vector<Service *> clients;
     };
 }

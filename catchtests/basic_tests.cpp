@@ -73,11 +73,12 @@ struct Test_service : Service {
     }
 };
 
-
-TEST_CASE("server"){
-    Server<Test_service> server;
-    server.start(8080);
-    auto client = Connection::connect_remote("127.0.0.1",8080);
-    client.send_data("test",5);
+TEST_CASE("server") {
+    {
+        Server<Test_service> server;
+        server.start(8080);
+        auto client = Connection::connect_remote("127.0.0.1", 8080);
+        client.send_data("test", 5);
+    }
     usleep(10000);
 }

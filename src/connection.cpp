@@ -12,7 +12,7 @@ using namespace std;
 
 namespace easy_tcp {
 
-    Connection::Connection(int file_descriptor) : file_descriptor(file_descriptor), state(Connection_state::Open){
+    Connection::Connection(int file_descriptor) : file_descriptor(file_descriptor), received_data_size(-1), state(Connection_state::Open){
     }
 
     bool Connection::send_data(const char *data, unsigned int size) {
