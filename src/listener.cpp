@@ -13,56 +13,8 @@
 
 using namespace std;
 
-namespace easy_tcp{
-
-    int process_client_connection_attempt(int m_sockfd, uint timeout, string &client_ip_address) {
-
-        if (timeout>0) {
-            timeval tv;
-            fd_set m_fds;
-            tv.tv_sec = timeout;
-            tv.tv_usec = 0;
-            FD_ZERO(&m_fds);
-            FD_SET(m_sockfd, &m_fds);
-            int selectRet = select(m_sockfd + 1, &m_fds, NULL, NULL, &tv);
-            if (selectRet == -1) { // select failed
-                cerr << strerror(errno) << endl;
-                return -1;
-            } else if (selectRet == 0) { // timeout
-                return -1;
-            } else if (!FD_ISSET(m_sockfd, &m_fds)) { //no new client
-                return -1;
-            }
-        }
-        sockaddr_in m_clientAddress;
-        socklen_t so_size = sizeof(m_clientAddress);
-        int file_descriptor = accept(m_sockfd, (struct sockaddr *) &m_clientAddress, &so_size);
-        if (file_descriptor == -1) { // accept failed
-            cerr << strerror(errno) << endl;
-            return -1;
-        }
-        client_ip_address = inet_ntoa(m_clientAddress.sin_addr);
-        return file_descriptor;
-    }
-
-    void process_incoming_connection_requests(Listener *listener){
-        cout << "Listener: listening on port " << listener->port << endl;
-        while (listener->active && (fcntl(listener->file_descriptor, F_GETFD) != -1 || errno != EBADF)){
-            string client_ip_address;
-            int file_descriptor = process_client_connection_attempt(listener->file_descriptor,1, client_ip_address);
-            if (file_descriptor > 0) {
-                if (!listener->call_back(file_descriptor, client_ip_address)) {
-                    close(file_descriptor);
-                }
-            }
-        }
-    }
-
-    bool Listener::start() {
-        if (port == -1) { //port not set
-            cerr << "Listener: port number not set" << endl;
-            return false;
-        }
+namespace easy_tcp {
+    bool Listener::start(int port) {
         struct sockaddr_in m_serverAddress;
         file_descriptor = socket(AF_INET, SOCK_STREAM, 0);
         if (file_descriptor == -1) { //socket failed
@@ -85,39 +37,42 @@ namespace easy_tcp{
             cerr << "Listener: listening failed" << endl;
             return false;
         }
-
-        active = true;
-        loop_thread = new thread(&process_incoming_connection_requests, this);
         return true;
     }
 
-    void Listener::stop() {
-        active = false;
-        if (loop_thread) {
-            cout << "stopping listener" << endl;
-            loop_thread->join();
-            delete (loop_thread);
-            loop_thread = nullptr;
+    int Listener::wait_for_client(int time_out) {
+        if (time_out>0) {
+            timeval tv;
+            fd_set m_fds;
+            tv.tv_sec = time_out;
+            tv.tv_usec = 0;
+            FD_ZERO(&m_fds);
+            FD_SET(file_descriptor, &m_fds);
+            int selectRet = select(file_descriptor + 1, &m_fds, NULL, NULL, &tv);
+            if (selectRet == -1) { // select failed
+                cerr << strerror(errno) << endl;
+                return -1;
+            } else if (selectRet == 0) { // timeout
+                return -1;
+            } else if (!FD_ISSET(file_descriptor, &m_fds)) { //no new client
+                return -1;
+            }
         }
+        sockaddr_in m_clientAddress;
+        socklen_t so_size = sizeof(m_clientAddress);
+        int client_file_descriptor = accept(file_descriptor, (struct sockaddr *) &m_clientAddress, &so_size);
+        if (client_file_descriptor == -1) { // accept failed
+            return -1;
+        }
+        //client_ip_address = inet_ntoa(m_clientAddress.sin_addr);
+        return client_file_descriptor;
+    }
+
+    void Listener::stop() {
         close(file_descriptor);
-    }
-
-    Listener::Listener(int port, connection_attempt_func_t call_back, int queue_size) : port(port), file_descriptor(0), active(false), call_back(call_back), queue_size(queue_size){
-    }
-
-    Listener::Listener() : Listener(-1, nullptr, 0){
-
-    }
-
-    bool Listener::start(int p_port, connection_attempt_func_t p_call_back, int p_queue_size) {
-        this->port = p_port;
-        this->call_back = p_call_back;
-        this->queue_size = p_queue_size;
-        return start();
     }
 
     Listener::~Listener() {
         stop();
     }
 }
-

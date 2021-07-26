@@ -1,26 +1,18 @@
 #pragma once
-
-#include <string>
+#include <easy_tcp/connection.h>
 #include <thread>
-#include <functional>
 
-namespace easy_tcp {
+namespace easy_tcp{
     struct Service {
-        virtual bool on_connect(std::string) {
-            return true;
-        };
-        virtual void on_data_received(const char *msg, unsigned int) {
-            std::string msg_str = msg;
-            on_data_received(msg_str);
-        };
-        virtual void on_data_received(const std::string &) {};
-        virtual void on_disconnect() {};
+        Service(int);
+        virtual void on_connect();
+        virtual void on_incoming_data(const char *, int);
+        virtual void on_disconnect();
+        Connection connection;
         ~Service();
-        bool operator == (const Service &other);
-        void set_handler(std::function<void(void)> func) { m_threadHandler = new std::thread(func); }
-        int fd = 0;
-        std::string ip;
-        bool connected;
-        std::thread *m_threadHandler = nullptr;
+    private:
+        void process_incoming_data();
+        std::atomic<bool> *receiving_data;
+        std::thread *incoming_data_thread;
     };
 }

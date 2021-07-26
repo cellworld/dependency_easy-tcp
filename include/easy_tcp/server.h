@@ -1,34 +1,46 @@
 #pragma once
-
-#include <vector>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <thread>
-#include <functional>
-#include <cstring>
-#include <errno.h>
-#include <iostream>
+#include <easy_tcp/connection.h>
 #include <easy_tcp/listener.h>
 #include <easy_tcp/service.h>
+#include <vector>
 
-#define MAX_PACKET_SIZE 4096
-
-namespace easy_tcp {
+namespace easy_tcp{
     template <class T>
-    requires std::is_base_of<Service, T>::value
-    class Server {
-    public:
-        bool start(){
-            clients.clear();
-            return true;
-        };
-        bool finish();
+    struct Server{
+        static_assert(std::is_base_of<Service, T>::value, "T must inherit from Service");
+
+        bool start(int port){
+            listener.start(port);
+            listening = new std::atomic<bool>;
+            *listening = false;
+            incoming_connections = new std::thread([this] () {
+                *listening = true;
+                while (*listening){
+                    auto incoming_connection = listener.wait_for_client(10);
+                    if (incoming_connection>=0){
+                        auto new_service = new T(incoming_connection);
+                        clients.push_back(new_service);
+                        new_service->on_connect();
+                    }
+                }
+
+            });
+            while (!*listening);
+        }
+
+        ~Server(){
+            *listening = false;
+            for(auto client:clients)
+                delete(client);
+            incoming_connections->join();
+            delete(listening);
+            delete(incoming_connections);
+        }
+
+        Listener listener;
     private:
-        std::vector<T> clients;
+        std::atomic<bool> *listening = nullptr;
+        std::thread *incoming_connections =nullptr;
+        std::vector<Service *> clients;
     };
 }
