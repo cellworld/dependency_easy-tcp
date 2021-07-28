@@ -7,6 +7,6 @@ namespace easy_tcp{
         int wait_for_client(int);
         ~Listener();
         int file_descriptor;
-        int queue_size = 100;
+        int queue_size = 10000;
     };
 }
