@@ -4,9 +4,7 @@
 
 namespace easy_tcp{
     struct Service {
-        explicit Service(int);
-
-        void start();
+        void start(int);
 
         virtual void on_connect();
         virtual void on_incoming_data(const char *, int);
@@ -18,11 +16,8 @@ namespace easy_tcp{
 
         void stop();
 
-        ~Service();
-
-
     private:
-        Connection connection;
-        std::thread *incoming_data_thread;
+        Connection *connection = nullptr;
+        std::thread *incoming_data_thread = nullptr;
     };
 }

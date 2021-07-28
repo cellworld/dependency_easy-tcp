@@ -5,33 +5,29 @@
 using namespace std;
 
 namespace easy_tcp {
-    Service::Service(int file_descriptor): connection(file_descriptor), incoming_data_thread(nullptr) {
-    }
-
-    Service::~Service() {
-    }
 
     bool Service::send_data(const char *data, int size) {
-        return connection.send_data(data, size);
+        return connection->send_data(data, size);
     }
 
     bool Service::send_data(const std::string &data) {
-        return send_data(data.c_str(),data.size());
+        return send_data(data.c_str(), data.size());
     }
 
-    void Service::start() {
+    void Service::start(int file_descriptor) {
+        connection = new Connection(file_descriptor);
         if (incoming_data_thread) {
             throw logic_error("Service already running");
         }
-        atomic<bool> ready = false;
+        bool ready = false;
         incoming_data_thread = new thread([this, &ready](){
-            connection.set_no_block();
+            connection->set_no_block();
             ready = true;
             while(true){
-                if (connection.receive_data()){
-                    on_incoming_data(connection.buffer,connection.received_data_size);
+                if (connection->receive_data()){
+                    on_incoming_data(connection->buffer,connection->received_data_size);
                 }
-                if (connection.state == Connection_state::Closed) {
+                if (connection->state == Connection_state::Closed) {
                     on_disconnect();
                     break;
                 }
@@ -43,11 +39,14 @@ namespace easy_tcp {
 
     void Service::stop() {
         if (incoming_data_thread) {
-            connection.disconnect();
+            connection->disconnect();
             incoming_data_thread->join();
             delete (incoming_data_thread);
             incoming_data_thread = nullptr;
+            delete(connection);
+            connection = nullptr;
         }
+
     }
 
     void Service::on_connect() {

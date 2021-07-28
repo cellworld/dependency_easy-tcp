@@ -65,12 +65,12 @@ if (CMAKE_BUILD_TYPE MATCHES Release)
     install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
     install(EXPORT Easy-tcpConfig
-            DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/Easy-cpp
+            DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/Easy-tcp
             EXPORT_LINK_INTERFACE_LIBRARIES)
 
     export(TARGETS easy-tcp FILE Easy-tcpConfig.cmake)
 
-    install(CODE "FILE(APPEND ${CMAKE_INSTALL_FULL_DATADIR}/cmake/Easy-cpp/Easy-tcpConfig.cmake \"find_package(Threads REQUIRED)\n\") ")
-    install(CODE "FILE(APPEND ${CMAKE_INSTALL_FULL_DATADIR}/cmake/Easy-cpp/Easy-tcpConfig.cmake \"set(CMAKE_CXX_FLAGS  ${CMAKE_CXX_FLAGS} \"-pthread\")\n\") ")
+    install(CODE "FILE(APPEND ${CMAKE_INSTALL_FULL_DATADIR}/cmake/Easy-tcp/Easy-tcpConfig.cmake \"find_package(Threads REQUIRED)\n\") ")
+    #install(CODE "FILE(APPEND ${CMAKE_INSTALL_FULL_DATADIR}/cmake/Easy-tcp/Easy-tcpConfig.cmake \"set(CMAKE_CXX_FLAGS  ${CMAKE_CXX_FLAGS} \"-pthread\")\n\") ")
 
 endif()
