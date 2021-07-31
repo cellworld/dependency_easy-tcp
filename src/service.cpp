@@ -11,7 +11,7 @@ namespace easy_tcp {
     }
 
     bool Service::send_data(const std::string &data) {
-        return send_data(data.c_str(), data.size());
+        return send_data(data.c_str(), data.size() + 1);
     }
 
     void Service::start(int file_descriptor) {
