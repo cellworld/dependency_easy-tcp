@@ -17,7 +17,7 @@ namespace easy_tcp{
             incoming_connections_thread = new std::thread([this] () {
                 *listening = true;
                 while (*listening){
-                    auto incoming_connection = listener.wait_for_client(10);
+                    auto incoming_connection = listener.wait_for_client(0);
                     if (incoming_connection >= 0){
                         auto new_service = new T();
                         clients.push_back(new_service);
