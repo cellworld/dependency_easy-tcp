@@ -21,7 +21,7 @@ namespace easy_tcp {
         }
         bool ready = false;
         incoming_data_thread = new thread([this, &ready](){
-            connection->set_no_block();
+//            connection->set_no_block();
             ready = true;
             while(true){
                 if (connection->receive_data()){

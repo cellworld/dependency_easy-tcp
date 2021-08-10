@@ -55,6 +55,7 @@ namespace easy_tcp {
 
     void Connection::disconnect() {
         state = Connection_state::Closed;
+        shutdown(file_descriptor, SHUT_RDWR);
         close(file_descriptor);
     }
 

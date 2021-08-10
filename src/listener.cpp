@@ -69,6 +69,7 @@ namespace easy_tcp {
     }
 
     void Listener::stop() {
+        shutdown(file_descriptor,SHUT_RDWR);
         close(file_descriptor);
     }
 

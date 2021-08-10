@@ -10,10 +10,14 @@ namespace easy_tcp{
     struct Server{
         static_assert(std::is_base_of<Service, T>::value, "T must inherit from Service");
 
-        bool start(int port){
-            if (!listener.start(port)) return false;
+        Server(){
             listening = new std::atomic<bool>;
             *listening = false;
+        }
+
+        bool start(int port){
+            if (*listening) return false;
+            if (!listener.start(port)) return false;
             incoming_connections_thread = new std::thread([this] () {
                 *listening = true;
                 while (*listening){
@@ -30,15 +34,23 @@ namespace easy_tcp{
             return true;
         }
 
-        ~Server(){
+        void stop(){
+            if (!*listening) return;
             *listening = false;
+            listener.stop();
             incoming_connections_thread->join();
+            delete(incoming_connections_thread);
+            incoming_connections_thread = nullptr;
             for(auto client:clients) {
                 client->stop();
                 delete (client);
             }
+            clients.clear();
+        }
+
+        ~Server(){
+            stop();
             delete(listening);
-            delete(incoming_connections_thread);
         }
 
         Listener listener;
