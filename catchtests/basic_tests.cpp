@@ -6,7 +6,7 @@
 using namespace std;
 using namespace easy_tcp;
 
-bool received = false;
+std::atomic<bool> received = false;
 
 struct Test_service : Service {
     void on_connect() override {

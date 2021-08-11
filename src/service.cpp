@@ -1,6 +1,7 @@
 #include <easy_tcp/service.h>
 #include <thread>
 #include <iostream>
+#include <cstring>
 
 using namespace std;
 
@@ -20,19 +21,23 @@ namespace easy_tcp {
             throw logic_error("Service already running");
         }
         bool ready = false;
-        incoming_data_thread = new thread([this, &ready](){
+        incoming_data_thread = new thread([&ready](Service &service){
 //            connection->set_no_block();
             ready = true;
             while(true){
-                if (connection->receive_data()){
-                    on_incoming_data(connection->buffer,connection->received_data_size);
+                if (service.connection->receive_data()){
+//                    char *copied= (char*) malloc(connection->received_data_size);
+//                    memcpy(copied,connection->buffer,connection->received_data_size);
+//                    on_incoming_data(copied,connection->received_data_size);
+                    service.on_incoming_data(service.connection->buffer,service.connection->received_data_size);
+//                    delete(copied);
                 }
-                if (connection->state == Connection_state::Closed) {
-                    on_disconnect();
+                if (service.connection->state == Connection_state::Closed) {
+                    service.on_disconnect();
                     break;
                 }
             }
-        });
+        }, std::ref(*this));
         while(!ready);
         on_connect();
     }

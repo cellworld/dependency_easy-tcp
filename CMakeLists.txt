@@ -53,7 +53,7 @@ find_package(CatchTests CONFIG QUIET)
 ### LIBRARY INSTALLATION
 ###
 
-if (CMAKE_BUILD_TYPE MATCHES Release)
+#if (CMAKE_BUILD_TYPE MATCHES Release)
 
     include(GNUInstallDirs)
 
@@ -73,4 +73,4 @@ if (CMAKE_BUILD_TYPE MATCHES Release)
     install(CODE "FILE(APPEND ${CMAKE_INSTALL_FULL_DATADIR}/cmake/Easy-tcp/Easy-tcpConfig.cmake \"find_package(Threads REQUIRED)\n\") ")
     #install(CODE "FILE(APPEND ${CMAKE_INSTALL_FULL_DATADIR}/cmake/Easy-tcp/Easy-tcpConfig.cmake \"set(CMAKE_CXX_FLAGS  ${CMAKE_CXX_FLAGS} \"-pthread\")\n\") ")
 
-endif()
+#endif()
