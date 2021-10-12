@@ -16,7 +16,12 @@ namespace easy_tcp {
     }
 
     bool Connection::send_data(const char *data, unsigned int size) {
-        int bytes_sent = send(file_descriptor, (char *)data, size, 0);
+        int bytes_sent = 0;
+        try {
+            bytes_sent = send(file_descriptor, (char *) data, size, 0);
+        } catch (...){
+            return false;
+        }
         if (bytes_sent == (int) size) return true;
         return false;
     }
