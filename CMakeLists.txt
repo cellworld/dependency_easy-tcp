@@ -18,7 +18,7 @@ set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-pthread")
 set(easy_tcp_files
         src/listener.cpp
         src/connection.cpp
-        src/service.cpp)
+        src/service.cpp include/easy_tcp/client.h src/client.cpp)
 
 add_library(easy-tcp ${easy_tcp_files})
 

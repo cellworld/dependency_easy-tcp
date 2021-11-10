@@ -3,3 +3,4 @@
 #include <easy_tcp/connection.h>
 #include <easy_tcp/service.h>
 #include <easy_tcp/server.h>
+#include <easy_tcp/client.h>
