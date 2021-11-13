@@ -9,7 +9,7 @@ project( easy-tcp
 
 find_package(Threads)
 
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-pthread")
+string(APPEND CMAKE_CXX_FLAGS "-pthread")
 
 ###
 ### MAIN LIBRARY SETUP
@@ -70,7 +70,9 @@ find_package(CatchTests CONFIG QUIET)
 
     export(TARGETS easy-tcp FILE Easy-tcpConfig.cmake)
 
+
     install(CODE "FILE(APPEND ${CMAKE_INSTALL_FULL_DATADIR}/cmake/Easy-tcp/Easy-tcpConfig.cmake \"find_package(Threads REQUIRED)\n\") ")
-    #install(CODE "FILE(APPEND ${CMAKE_INSTALL_FULL_DATADIR}/cmake/Easy-tcp/Easy-tcpConfig.cmake \"set(CMAKE_CXX_FLAGS  ${CMAKE_CXX_FLAGS} \"-pthread\")\n\") ")
+    install(CODE "FILE(APPEND ${CMAKE_INSTALL_FULL_DATADIR}/cmake/Easy-tcp/Easy-tcpConfig.cmake \"string(APPEND CMAKE_CXX_FLAGS \\\"-pthread \\\" )\n\")")
+
 
 #endif()
