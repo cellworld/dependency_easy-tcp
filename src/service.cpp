@@ -58,8 +58,13 @@ namespace easy_tcp {
 
     }
 
-    void Service::on_incoming_data(const char *data, int) {
-        on_incoming_data(std::string(data));
+    void Service::on_incoming_data(const char *data, int s) {
+        int b = 0, e = 0;
+        while (e < s) {
+            for ( e = b; data[e] && e < s; e++);
+            on_incoming_data(std::string(data + b));
+            b = e + 1;
+        }
     }
 
     void Service::on_disconnect() {

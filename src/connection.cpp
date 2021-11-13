@@ -76,6 +76,7 @@ namespace easy_tcp {
                 state = Connection_state::Error;
                 return false;
             } else {
+                buffer[received_data_size] = '\0';
                 return true;
             }
         }
