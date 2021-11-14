@@ -58,12 +58,13 @@ namespace easy_tcp {
 
     }
 
-    void Service::on_incoming_data(const char *data, int s) {
-        int b = 0, e = 0;
-        while (e < s) {
-            for ( e = b; data[e] && e < s; e++);
-            on_incoming_data(std::string(data + b));
-            b = e + 1;
+    void Service::on_incoming_data(const char *buff, int size) {
+        size_t s = 0, e = 0; // start and end set to zero
+        while (e<(size_t)size) { // while the end is before the size
+            for (e = s; buff[e]; e++); // move the end to the first zero char
+            if (e > s)
+                on_incoming_data(string(buff + s)); // convert the c-string from s-e to std::string and call receive_data(string)
+            s = e + 1; // move the start to end + 1
         }
     }
 

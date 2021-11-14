@@ -24,7 +24,7 @@ namespace easy_tcp {
                 }
             }
         });
-        return false;
+        return true;
     }
 
     bool Client::send_data(const std::string &d) {
@@ -36,10 +36,10 @@ namespace easy_tcp {
     }
 
     void Client::received_data(char *buff, size_t size) {
-        buff[size] = 0; // makes sure it is zero terminated
         size_t s = 0, e = 0; // start and end set to zero
         while (e<size) { // while the end is before the size
             for (e = s; buff[e]; e++); // move the end to the first zero char
+            if (e > s)
             received_data(string(buff + s)); // convert the c-string from s-e to std::string and call receive_data(string)
             s = e + 1; // move the start to end + 1
         }

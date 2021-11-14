@@ -40,6 +40,9 @@ namespace easy_tcp {
         return true;
     }
 
+#pragma GCC push_options
+#pragma GCC optimize("O0")
+
     int Listener::wait_for_client(int time_out) {
         if (time_out>0) {
             timeval tv;
@@ -67,6 +70,8 @@ namespace easy_tcp {
         //client_ip_address = inet_ntoa(m_clientAddress.sin_addr);
         return client_file_descriptor;
     }
+
+#pragma GCC pop_options
 
     void Listener::stop() {
         shutdown(file_descriptor,SHUT_RDWR);

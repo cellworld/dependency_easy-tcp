@@ -1,7 +1,7 @@
 #include<catch.h>
-#include <easy_tcp.h>
-#include <iostream>
-#include <unistd.h>
+#include<easy_tcp.h>
+#include<iostream>
+#include<unistd.h>
 
 using namespace std;
 using namespace easy_tcp;
