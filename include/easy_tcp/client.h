@@ -13,7 +13,6 @@ namespace easy_tcp {
         virtual void received_data(char *, size_t);
         void disconnect();
         std::atomic<bool> running;
-        std::atomic<bool> new_data;
         std::thread client_thread;
     };
 }

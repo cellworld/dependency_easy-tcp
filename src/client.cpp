@@ -17,10 +17,8 @@ namespace easy_tcp {
         running = true;
         client_thread = thread([&] {
             while(running) {
-                if (new_data) continue;
                 if (receive_data()) {
                     received_data(buffer, received_data_size);
-                    new_data = true;
                 }
             }
         });
