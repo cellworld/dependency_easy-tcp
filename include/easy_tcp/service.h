@@ -15,9 +15,9 @@ namespace easy_tcp{
         bool send_data(const std::string &);
 
         void stop();
+        Connection *connection = nullptr;
 
     private:
-        Connection *connection = nullptr;
         std::thread *incoming_data_thread = nullptr;
     };
 }
