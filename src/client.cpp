@@ -50,6 +50,8 @@ namespace easy_tcp {
     }
 
     Client::~Client() {
-
+        try{
+            disconnect();
+        } catch(...) {}
     }
 }
