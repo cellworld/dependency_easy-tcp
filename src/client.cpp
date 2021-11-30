@@ -14,14 +14,15 @@ namespace easy_tcp {
         } catch (...){
             return false;
         }
-        running = true;
         client_thread = thread([&] {
+            running = true;
             while(running) {
                 if (receive_data()) {
                     received_data(buffer, received_data_size);
                 }
             }
         });
+        while (!running);
         return true;
     }
 
