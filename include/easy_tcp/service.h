@@ -4,7 +4,7 @@
 
 namespace easy_tcp{
     struct Service {
-        ~Service();
+        virtual ~Service();
         void start(int);
 
         virtual void on_connect();
