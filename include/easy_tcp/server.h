@@ -19,7 +19,6 @@ namespace easy_tcp{
             if (!listener.start(port)) return false;
             incoming_connections_thread = std::thread([this] () {
                 listening = true;
-                int i = 0;
                 while (listening){
                     auto incoming_connection = listener.wait_for_client(1);
                     if (incoming_connection >= 0){
@@ -28,8 +27,7 @@ namespace easy_tcp{
                         new_service->start(incoming_connection);
                     }
                 }
-
-                });
+            });
             while (!listening);
             return true;
         }
