@@ -76,4 +76,8 @@ namespace easy_tcp {
 
     }
 
+    Service::~Service() {
+        stop();
+    }
+
 }
