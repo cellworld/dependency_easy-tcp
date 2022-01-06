@@ -19,7 +19,7 @@ namespace easy_tcp{
 
         void stop();
         Connection *connection = nullptr;
-        bool *server_running;
+        std::atomic<bool> *server_running;
     private:
         std::thread *incoming_data_thread = nullptr;
     };
