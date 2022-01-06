@@ -15,9 +15,11 @@ namespace easy_tcp{
         bool send_data(const char *, int);
         bool send_data(const std::string &);
 
+        void disconnect();
+
         void stop();
         Connection *connection = nullptr;
-
+        bool *server_running;
     private:
         std::thread *incoming_data_thread = nullptr;
     };

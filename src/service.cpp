@@ -22,15 +22,10 @@ namespace easy_tcp {
         }
         bool ready = false;
         incoming_data_thread = new thread([&ready](Service &service){
-//            connection->set_no_block();
             ready = true;
             while(true){
                 if (service.connection->receive_data()){
-//                    char *copied= (char*) malloc(connection->received_data_size);
-//                    memcpy(copied,connection->buffer,connection->received_data_size);
-//                    on_incoming_data(copied,connection->received_data_size);
                     service.on_incoming_data(service.connection->buffer,service.connection->received_data_size);
-//                    delete(copied);
                 }
                 if (service.connection->state == Connection_state::Closed) {
                     service.on_disconnect();
@@ -42,7 +37,7 @@ namespace easy_tcp {
         on_connect();
     }
 
-    void Service::stop() {
+    void Service::disconnect() {
         if (incoming_data_thread) {
             connection->disconnect();
             incoming_data_thread->join();
@@ -51,7 +46,6 @@ namespace easy_tcp {
             delete(connection);
             connection = nullptr;
         }
-
     }
 
     void Service::on_connect() {
@@ -77,7 +71,11 @@ namespace easy_tcp {
     }
 
     Service::~Service() {
-        stop();
+        disconnect();
+    }
+
+    void Service::stop() {
+        *server_running = false;
     }
 
 }
