@@ -47,6 +47,12 @@ namespace easy_tcp{
         ~Server(){
             stop();
         }
+
+        void join() {
+            if (incoming_connections_thread.joinable())
+                incoming_connections_thread.join();
+        }
+
         Listener listener;
     private:
         std::atomic<bool> listening;
