@@ -24,7 +24,7 @@ namespace easy_tcp{
                     if (incoming_connection >= 0){
                         auto new_service = new T();
                         clients.push_back(new_service);
-                        new_service->running_server = &listening;
+                        new_service->server_running = &listening;
                         new_service->start(incoming_connection);
                     }
                 }
