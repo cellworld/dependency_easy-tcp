@@ -17,9 +17,9 @@ namespace easy_tcp {
 
     void Service::start(int file_descriptor) {
         connection = new Connection(file_descriptor);
-        if (incoming_data_thread) {
-            throw logic_error("Service already running");
-        }
+//        if (incoming_data_thread) {
+//            throw logic_error("Service already running");
+//        }
         bool ready = false;
         incoming_data_thread = new thread([&ready](Service &service){
             ready = true;
