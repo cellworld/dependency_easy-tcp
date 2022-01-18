@@ -58,10 +58,9 @@ namespace easy_tcp{
         }
 
         Listener listener;
+        std::vector<T *>clients;
     private:
         std::atomic<bool> listening;
         std::thread incoming_connections_thread;
-    protected:
-        std::vector<T *> clients;
     };
 }
