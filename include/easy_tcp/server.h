@@ -14,7 +14,7 @@ namespace easy_tcp{
             listening = false;
         }
 
-        virtual void on_new_connection(Service &){}
+        virtual void on_new_connection(T &){}
 
         bool start(int port){
             if (listening) return false;
@@ -61,6 +61,7 @@ namespace easy_tcp{
     private:
         std::atomic<bool> listening;
         std::thread incoming_connections_thread;
-        std::vector<Service *> clients;
+    protected:
+        std::vector<T *> clients;
     };
 }
