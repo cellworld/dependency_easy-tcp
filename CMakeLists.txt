@@ -7,6 +7,7 @@ project( easy-tcp
         DESCRIPTION "Easy tcp library"
         LANGUAGES CXX)
 
+find_package(Dependencies)
 find_package(Threads)
 
 string(APPEND CMAKE_CXX_FLAGS "-pthread")
@@ -47,32 +48,28 @@ target_include_directories(easy-tcp
 ###
 ### TESTS
 ###
-find_package(CatchTests CONFIG QUIET)
+install_dependency(https://github.com/germanespinosa/catch CatchTests)
+test_library(easy-tcp)
 
 ###
 ### LIBRARY INSTALLATION
 ###
 
-#if (CMAKE_BUILD_TYPE MATCHES Release)
+include(GNUInstallDirs)
 
-    include(GNUInstallDirs)
+install(TARGETS easy-tcp EXPORT Easy-tcpConfig
+        ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-    install(TARGETS easy-tcp EXPORT Easy-tcpConfig
-            ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-    install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(EXPORT Easy-tcpConfig
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/Easy-tcp
+        EXPORT_LINK_INTERFACE_LIBRARIES)
 
-    install(EXPORT Easy-tcpConfig
-            DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/Easy-tcp
-            EXPORT_LINK_INTERFACE_LIBRARIES)
-
-    export(TARGETS easy-tcp FILE Easy-tcpConfig.cmake)
+export(TARGETS easy-tcp FILE Easy-tcpConfig.cmake)
 
 
-    install(CODE "FILE(APPEND ${CMAKE_INSTALL_FULL_DATADIR}/cmake/Easy-tcp/Easy-tcpConfig.cmake \"find_package(Threads REQUIRED)\n\") ")
-    install(CODE "FILE(APPEND ${CMAKE_INSTALL_FULL_DATADIR}/cmake/Easy-tcp/Easy-tcpConfig.cmake \"string(APPEND CMAKE_CXX_FLAGS \\\"-pthread \\\" )\n\")")
-
-
-#endif()
+install(CODE "FILE(APPEND ${CMAKE_INSTALL_FULL_DATADIR}/cmake/Easy-tcp/Easy-tcpConfig.cmake \"find_package(Threads REQUIRED)\n\") ")
+install(CODE "FILE(APPEND ${CMAKE_INSTALL_FULL_DATADIR}/cmake/Easy-tcp/Easy-tcpConfig.cmake \"string(APPEND CMAKE_CXX_FLAGS \\\"-pthread \\\" )\n\")")

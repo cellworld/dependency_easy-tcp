@@ -14,6 +14,8 @@ namespace easy_tcp{
             listening = false;
         }
 
+        virtual void on_new_connection(Service &){}
+
         bool start(int port){
             if (listening) return false;
             if (!listener.start(port)) return false;
@@ -26,6 +28,7 @@ namespace easy_tcp{
                         clients.push_back(new_service);
                         new_service->server_running = &listening;
                         new_service->start(incoming_connection);
+                        on_new_connection(*new_service);
                     }
                 }
             });
