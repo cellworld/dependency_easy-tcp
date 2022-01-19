@@ -20,6 +20,9 @@ namespace easy_tcp {
                 if (receive_data()) {
                     received_data(buffer, received_data_size);
                 }
+                if (state != Connection_state::Open){
+                    break;
+                }
             }
         });
         while (!running);
@@ -54,5 +57,10 @@ namespace easy_tcp {
         try{
             disconnect();
         } catch(...) {}
+    }
+
+    void easy_tcp::Client::join() {
+        if (client_thread.joinable())
+            client_thread.join();
     }
 }

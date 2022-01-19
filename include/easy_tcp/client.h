@@ -12,7 +12,9 @@ namespace easy_tcp {
         virtual void received_data(const std::string &);
         virtual void received_data(char *, size_t);
         void disconnect();
+        void join();
         std::atomic<bool> running;
         std::thread client_thread;
+
     };
 }
