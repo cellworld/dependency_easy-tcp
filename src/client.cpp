@@ -50,7 +50,7 @@ namespace easy_tcp {
     void Client::disconnect() {
         running = false;
         Connection::disconnect();
-        client_thread.join();
+        if (client_thread.joinable()) client_thread.join();
     }
 
     Client::~Client() {
