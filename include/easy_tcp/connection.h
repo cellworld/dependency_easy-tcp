@@ -1,4 +1,5 @@
 #pragma once
+#include <cstring>
 #include<string>
 #include<vector>
 #define MAX_PACKET_SIZE 8192
@@ -18,7 +19,13 @@ namespace easy_tcp{
         void disconnect();
         int file_descriptor;
         int received_data_size;
-        char buffer[MAX_PACKET_SIZE];
+        char buffer[MAX_PACKET_SIZE + 1];
         Connection_state state;
+        template <typename T>
+        bool get_data(T &v){
+            if (sizeof(T) != received_data_size) return false;
+            std::memcpy((char *)&v, buffer, received_data_size);
+            return true;
+        }
     };
 }
