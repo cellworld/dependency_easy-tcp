@@ -1,7 +1,8 @@
 #pragma once
-#include <cstring>
+#include<cstring>
 #include<string>
 #include<vector>
+#include<chrono>
 #define MAX_PACKET_SIZE 8192
 
 namespace easy_tcp{
@@ -25,7 +26,16 @@ namespace easy_tcp{
         bool get_data(T &v){
             if (sizeof(T) != received_data_size) return false;
             std::memcpy((char *)&v, buffer, received_data_size);
+            received_data_size = 0;
             return true;
+        }
+        template <typename T, typename TO>
+        bool wait_for_data(T &v, TO time_out){
+            auto limit = std::chrono::high_resolution_clock::now() + time_out;
+            while (limit > std::chrono::high_resolution_clock::now()){
+                if (get_data(v)) return true;
+            }
+            return false;
         }
     };
 }
