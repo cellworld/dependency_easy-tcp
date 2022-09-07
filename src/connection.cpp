@@ -53,7 +53,7 @@ namespace easy_tcp {
 
         int connectRet = connect(file_descriptor , (struct sockaddr *)&m_server , sizeof(m_server));
         if (connectRet == -1) {
-            throw logic_error(strerror(errno));
+                    throw logic_error(strerror(errno));
         }
         return Connection(file_descriptor);
     }
