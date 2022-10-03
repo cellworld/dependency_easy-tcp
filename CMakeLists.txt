@@ -48,8 +48,8 @@ target_include_directories(easy-tcp
 ###
 ### TESTS
 ###
-install_dependency(https://github.com/germanespinosa/catch CatchTests)
-test_library(easy-tcp)
+#install_git_dependency(https://github.com/germanespinosa/catch CatchTests)
+#test_library(easy-tcp)
 
 ###
 ### LIBRARY INSTALLATION
