@@ -36,7 +36,8 @@ string(APPEND CMAKE_CXX_FLAGS "-pthread")
 set(easy_tcp_files
         src/listener.cpp
         src/connection.cpp
-        src/service.cpp include/easy_tcp/client.h src/client.cpp)
+        src/service.cpp
+        src/client.cpp)
 
 add_library(easy-tcp ${easy_tcp_files})
 
@@ -62,11 +63,25 @@ target_include_directories(easy-tcp
         PRIVATE
         include )
 
-###
-### TESTS
-###
-#install_git_dependency(https://github.com/germanespinosa/catch CatchTests)
-#test_library(easy-tcp)
+
+####
+#### TESTS
+####
+
+if (NOT "${BUILD_AS_DEPENDENCY}" MATCHES "TRUE")
+
+    install_git_dependency( Catch
+            https://github.com/cellworld-neuro/dependency_catch
+            ADD_SUBDIRECTORY)
+
+    add_catch_test( basic_tests
+            TEST_FILES
+            catchtests/basic_tests.cpp
+            LINK_LIBRARIES easy-tcp
+            INCLUDE_DIRECTORIES
+            include)
+
+endif()
 
 ###
 ### LIBRARY INSTALLATION
