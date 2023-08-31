@@ -71,7 +71,7 @@ target_include_directories(easy-tcp
 if (NOT "${BUILD_AS_DEPENDENCY}" MATCHES "TRUE")
 
     install_git_dependency( Catch
-            https://github.com/cellworld-neuro/dependency_catch
+            https://github.com/cellworld/dependency_catch
             ADD_SUBDIRECTORY)
 
     add_catch_test( basic_tests
